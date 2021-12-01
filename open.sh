@@ -16,7 +16,11 @@ fi
 target_epoch=$(date -j "12${day0}06002021.00" +%s)
 
 mkdir -p day$day0/data/
-cp module.py day$day0/
+if [ ! -f day$day0/module.py ]; then
+    cp module.py day$day0/
+else
+    echo "module already there"
+fi
 touch day$day0/data/sample.txt
 
 sleep_seconds=$(( $target_epoch - $current_epoch +1))
