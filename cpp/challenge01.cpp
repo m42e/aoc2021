@@ -5,7 +5,7 @@
 
 #include "challenge.h"
 
-CHALLENGE(01, int) {
+CHALLENGE(01, int, int) {
   std::vector<int> data =
       read([](std::string x) -> int { return std::atoi(x.c_str()); });
 }
@@ -17,25 +17,23 @@ PART1(01) {
     count_increasing += (j > current);
     current = j;
   }
-
-  std::cout << count_increasing << std::endl;
+  return count_increasing;
 }
 
 template <typename X, typename F>
 void for_junk(X container, size_t chunk, F f) {
-  for (int j = 0; j < container.size() - chunk; j++) {
-    auto start = begin(container) + j;
-    auto end = start + chunk;
-    f(std::move(start), std::move(end));
+  for (auto start = begin(container) ; start + 3 < container.end(); start++) {
+    f(start, start+chunk);
   }
 }
 
 PART2(01) {
   std::vector<int> sums;
 
-  for_junk(data, 3, [&sums](auto from, auto to) {
+  for_junk(data, 3, [this, &sums](auto from, auto to) {
     sums.push_back(std::accumulate(from, to, 0));
   });
+  step();
 
-  Part1(sums);
+  return Part1(sums);
 }

@@ -16,9 +16,11 @@ constexpr size_t length( char const (&)[N] )
   return N-1;
 }
 
-#define CHALLENGE(name, usetype) \
+#define CHALLENGE(name, usetype, resulttype) \
 class Challenge_##name{ \
   public: \
+    using ResultType = resulttype; \
+    using UseType = usetype; \
     std::any inp; \
     template<typename T> \
     std::vector<T> get(){ \
@@ -43,43 +45,34 @@ class Challenge_##name{ \
       return result; \
     }\
     template<typename T> \
-    void Part1(T data);\
+    resulttype Part1(T data);\
     template<typename T> \
-    void Part2(T data);\
-    virtual void RunChallenge(){ \
-      ReadData(); \
+    resulttype Part2(T data);\
+    template<typename T> \
+    void RunPart(int part, T re){ \
       std::chrono::high_resolution_clock::time_point last; \
       std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃ Day " << std::left << std::setw(39 - length(#name)) << #name << " ┃\n"; \
       std::cout << "┠───────────────────────────────────────────┨\n"; \
-      std::cout << "┃ PART 1                                    ┃\n"; \
-      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
+      std::cout << "┃ PART " << part << "                                    ┃\n"; \
+      std::cout << "┃                                           ┃\n"; \
       start = std::chrono::high_resolution_clock::now(); \
-      Part1(get<usetype>()); \
-      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
-      std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
+      std::cout << "┃ " << std::invoke(re, this, get<usetype>()) << "\n"; \
+      std::cout << "┃                                           ┃\n"; \
+      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┃  took " << std::setw(22) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count()/1000.0 << " milliseconds ┃\n"; \
        last = start; \
       for (int i=0;auto s:steps){ \
-        std::cout << "┃ step " << std::setw(3) << ++i <<" finished " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-start).count() << " nanoseconds ┃\n"; \
-        std::cout << "┃ step " << std::setw(3) << i <<" took     " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-last).count() << " nanoseconds ┃\n"; \
+        std::cout << "┃ step " << std::setw(4) << ++i <<" finished " << std::setw(9) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-start).count()/1000.0 << " milliseconds ┃\n"; \
+        std::cout << "┃ step " << std::setw(4) << i <<" took     " << std::setw(9) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-last).count()/1000.0 << " milliseconds ┃\n"; \
         last = s; \
       } \
       std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
-      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
-      std::cout << "┃ PART 2                                    ┃\n"; \
-      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
-      steps.clear();\
-      start = std::chrono::high_resolution_clock::now(); \
-      Part2(get<usetype>()); \
-      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
-      std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
-       last = start; \
-      for (int i=0;auto s:steps){ \
-        std::cout << "┃ step " << std::setw(3) << ++i <<" finished " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-start).count() << " nanoseconds ┃\n"; \
-        std::cout << "┃ step " << std::setw(3) << i <<" took     " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-last).count() << " nanoseconds ┃\n"; \
-        last = s; \
-      } \
-      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
+    } \
+    virtual void RunChallenge(){ \
+      ReadData(); \
+      RunPart(1, &Challenge_##name::Part1<std::vector<usetype>>);\
+      RunPart(2, &Challenge_##name::Part2<std::vector<usetype>>);\
     } \
     virtual void ReadData();\
     void step(){ \
@@ -94,8 +87,8 @@ void Challenge_##name::ReadData()
 
 #define PART1(name) \
     template<typename T> \
-    void Challenge_##name::Part1(T data)
+    Challenge_##name::ResultType Challenge_##name::Part1(T data)
 
 #define PART2(name) \
     template<typename T> \
-    void Challenge_##name::Part2(T data)
+    Challenge_##name::ResultType Challenge_##name::Part2(T data)
