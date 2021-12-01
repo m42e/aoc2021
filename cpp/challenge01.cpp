@@ -9,6 +9,7 @@ CHALLENGE(01, int) {
   std::vector<int> data =
       read([](std::string x) -> int { return std::atoi(x.c_str()); });
 }
+
 PART1(01) {
   auto current{std::numeric_limits<int>::max()};
   int count_increasing{0};

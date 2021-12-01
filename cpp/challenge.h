@@ -42,8 +42,10 @@ class Challenge_##name{ \
       inp = result; \
       return result; \
     }\
-    void Part1(auto data = get<usetype>());\
-    void Part2(auto data = get<usetype>());\
+    template<typename T> \
+    void Part1(T data);\
+    template<typename T> \
+    void Part2(T data);\
     virtual void RunChallenge(){ \
       ReadData(); \
       std::chrono::high_resolution_clock::time_point last; \
@@ -90,6 +92,10 @@ class Challenge_##name{ \
 std::string const Challenge_##name::info = Register([]() -> void{ Challenge_##name r; r.RunChallenge(); }); \
 void Challenge_##name::ReadData()
 
-#define PART1(name) void Challenge_##name::Part1(auto data)
+#define PART1(name) \
+    template<typename T> \
+    void Challenge_##name::Part1(T data)
 
-#define PART2(name) void Challenge_##name::Part2(auto data)
+#define PART2(name) \
+    template<typename T> \
+    void Challenge_##name::Part2(T data)
