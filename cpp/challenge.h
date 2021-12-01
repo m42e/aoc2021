@@ -51,10 +51,10 @@ class Challenge_##name{ \
       std::cout << "┃ Day " << std::left << std::setw(39 - length(#name)) << #name << " ┃\n"; \
       std::cout << "┠───────────────────────────────────────────┨\n"; \
       std::cout << "┃ PART 1                                    ┃\n"; \
-      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       start = std::chrono::high_resolution_clock::now(); \
       Part1(); \
-      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
        last = start; \
       for (int i=0;auto s:steps){ \
@@ -62,13 +62,13 @@ class Challenge_##name{ \
         std::cout << "┃ step " << std::setw(3) << i <<" took     " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-last).count() << " nanoseconds ┃\n"; \
         last = s; \
       } \
-      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃ PART 2                                    ┃\n"; \
-      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       steps.clear();\
       start = std::chrono::high_resolution_clock::now(); \
       Part2(); \
-      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
        last = start; \
       for (int i=0;auto s:steps){ \
