@@ -1,32 +1,40 @@
+#include <algorithm>
 #include <iostream>
+#include <numeric>
+#include <vector>
 
 #include "challenge.h"
 
-#include <vector>
-
-
-CHALLENGE(01){
-  std::vector<int> data = read([](std::string x) -> int{return std::atoi(x.c_str());});
+CHALLENGE(01, int) {
+  std::vector<int> data =
+      read([](std::string x) -> int { return std::atoi(x.c_str()); });
 }
-PART1(01){
-
-  std::vector<int> data = get<int>();
-  auto current = data[0];
+PART1(01) {
+  auto current{std::numeric_limits<int>::max()};
   int count_increasing{0};
-  for (auto it = std::next(data.begin()); it != data.end(); ++it) {
-    if (*it > current){
-      count_increasing++;
-    }
-    current = *it;
+  for (auto j : data) {
+    count_increasing += (j > current);
+    current = j;
   }
 
   std::cout << count_increasing << std::endl;
-
 }
 
+template <typename X, typename F>
+void for_junk(X container, size_t chunk, F f) {
+  for (int j = 0; j < container.size() - chunk; j++) {
+    auto start = begin(container) + j;
+    auto end = start + chunk;
+    f(std::move(start), std::move(end));
+  }
+}
 
-PART2(01){
+PART2(01) {
+  std::vector<int> sums;
 
-  std::cout << "missing" << std::endl;
+  for_junk(data, 3, [&sums](auto from, auto to) {
+    sums.push_back(std::accumulate(from, to, 0));
+  });
 
+  Part1(sums);
 }

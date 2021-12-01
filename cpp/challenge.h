@@ -16,7 +16,7 @@ constexpr size_t length( char const (&)[N] )
   return N-1;
 }
 
-#define CHALLENGE(name) \
+#define CHALLENGE(name, usetype) \
 class Challenge_##name{ \
   public: \
     std::any inp; \
@@ -42,8 +42,8 @@ class Challenge_##name{ \
       inp = result; \
       return result; \
     }\
-    virtual void Part1();\
-    virtual void Part2();\
+    void Part1(auto data = get<usetype>());\
+    void Part2(auto data = get<usetype>());\
     virtual void RunChallenge(){ \
       ReadData(); \
       std::chrono::high_resolution_clock::time_point last; \
@@ -53,7 +53,7 @@ class Challenge_##name{ \
       std::cout << "┃ PART 1                                    ┃\n"; \
       std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       start = std::chrono::high_resolution_clock::now(); \
-      Part1(); \
+      Part1(get<usetype>()); \
       std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
        last = start; \
@@ -62,12 +62,13 @@ class Challenge_##name{ \
         std::cout << "┃ step " << std::setw(3) << i <<" took     " << std::setw(11) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(s-last).count() << " nanoseconds ┃\n"; \
         last = s; \
       } \
+      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃ PART 2                                    ┃\n"; \
       std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       steps.clear();\
       start = std::chrono::high_resolution_clock::now(); \
-      Part2(); \
+      Part2(get<usetype>()); \
       std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
       std::cout << "┃  took " << std::setw(23) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count() << " nanoseconds ┃\n"; \
        last = start; \
@@ -89,6 +90,6 @@ class Challenge_##name{ \
 std::string const Challenge_##name::info = Register([]() -> void{ Challenge_##name r; r.RunChallenge(); }); \
 void Challenge_##name::ReadData()
 
-#define PART1(name) void Challenge_##name::Part1()
+#define PART1(name) void Challenge_##name::Part1(auto data)
 
-#define PART2(name) void Challenge_##name::Part2()
+#define PART2(name) void Challenge_##name::Part2(auto data)
