@@ -31,17 +31,24 @@ class Challenge_##name{ \
       if (inp.has_value()){ \
         return std::any_cast<std::vector<typename std::result_of_t<T(std::string)>>>(inp); \
       } \
+      start = std::chrono::high_resolution_clock::now(); \
+      std::cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓" << "\n"; \
+      std::cout << "┃ Day " << std::left << std::setw(39 - length(#name)) << #name << " ┃\n"; \
+      std::cout << "┠───────────────────────────────────────────┨\n"; \
+      std::cout << "┃ DATA PARSING                              ┃\n"; \
+      std::cout << "┃  took " << std::setw(22) << std::right << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()-start).count()/1000.0 << " milliseconds ┃\n"; \
       std::ifstream input("../../day" #name "/data/data.txt"); \
       std::vector<typename std::result_of_t<T(std::string)>> result; \
       std::string myline; \
       if ( input.is_open() ) { \
-        while ( input ) { \
+        while ( input && ! input.eof()) { \
           std::getline (input, myline); \
+          if (input.eof()) continue; \
           result.push_back(apply(myline)); \
         } \
       } \
-      result.pop_back();\
       inp = result; \
+      std::cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛" << "\n"; \
       return result; \
     }\
     template<typename T> \
