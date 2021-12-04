@@ -12,14 +12,6 @@ def pw(line):
     return line.strip()
 
 
-def i(line):
-    return int(line.strip())
-
-
-def ss(line):
-    return pw(line).split(" ")
-
-
 class Board:
     def __init__(self, numbers):
         self.numbers = numbers
@@ -40,7 +32,7 @@ class Board:
         return False
 
     def print(self):
-        for i in [0, 5, 10, 15, 20]:
+        for i in range(0, 25, 5):
             for x in range(i, i + 5):
                 if x in self.crossed:
                     print("\033[1m\033[31m", end="")
@@ -58,76 +50,63 @@ class Board:
         return s
 
 
+def parse_bingo(inp):
+    draw = list(map(int, inp[0].split(",")))
+    inp = inp[2:]
+    boards = []
+    for board_start in range(0, len(inp), 6):
+        boards.append(
+            Board(
+                [
+                    int(x)
+                    for y in inp[board_start : board_start + 5]
+                    for x in filter(None, y.split(" "))
+                ]
+            )
+        )
+
+    return draw, boards
+
+
 def p1():
     inp = get_input(pw)
-    draw = list(map(int, inp[0].split(",")))
-    inp = inp[1:]
-    boards = []
-    temp = []
-    for sample in inp:
-        if len(sample) == 0:
-            boards.append(Board(copy.copy(temp)))
-            temp = []
-        else:
-            for n in list(map(int, map(str.strip, filter(None, sample.split(" "))))):
-                temp.append(n)
-    boards.append(Board(copy.copy(temp)))
+    draw, boards = parse_bingo(inp)
 
     for d in draw:
         for board in boards:
             board.cross(d)
             if board.check():
                 board.print()
-                print("components: ", board.sum(), d)
-                print(board.sum() * d)
                 return board.sum() * d
-    return inp
+    return 0
 
 
 def p2(segments):
     inp = get_input(pw)
-    draw = list(map(int, inp[0].split(",")))
-    inp = inp[2:]
-    boards = []
-    temp = []
-    for sample in inp:
-        if len(sample) == 0:
-            boards.append(Board(copy.copy(temp)))
-            temp = []
-        else:
-            for n in list(map(int, map(str.strip, filter(None, sample.split(" "))))):
-                temp.append(n)
-    boards.append(Board(copy.copy(temp)))
+    draw, boards = parse_bingo(inp)
 
     for d in draw:
-        s = 0
         for board in boards:
             board.cross(d)
-            if board.check():
-                s += 1
 
-        if s == len(boards) - 1:
-            for i, board in enumerate(boards):
-                if board.check() == False:
-                    last_winner = i
-        if s == len(boards):
-            board.print()
-            print("winning board:", last_winner)
-            print("components: ", boards[last_winner].sum(), d)
-            print(boards[last_winner].sum() * d)
-            return 0
+        if len(boards) == 1 and boards[0].check():
+            boards[0].print()
+            return boards[0].sum() * d
+        boards = [x for x in boards if not x.check()]
 
-    return inp
+    return 0
 
 
 result1 = None
 if part_one():
     start = time.time()
     result1 = p1()
+    print(result1)
     print(round(1000 * (time.time() - start), 2), "ms")
 
 
 if part_two():
     start = time.time()
-    p2(result1)
+    r = p2(result1)
+    print(r)
     print(round(1000 * (time.time() - start), 2), "ms")
