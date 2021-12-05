@@ -9,6 +9,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fconcepts")
+if(PROF)
+if(PROF_GEN)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -O3  -flto")
+else()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-use=default.profdata -O3")
+endif()
+else()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3  -flto")
+endif()
 
 file (GLOB sources CONFIGURE_DEPENDS *.cpp )
 
