@@ -16,18 +16,14 @@ def lines(line, diags=False):
     linepoints = []
     max_coords = max([max_coords[0], seg[0][0], seg[1][0]]), max([max_coords[1], seg[0][1], seg[1][1]])
     if seg[0][0] == seg[1][0] or seg[0][1] == seg[1][1] :
-        y1 = min(seg[0][0], seg[1][0])
-        y2 = max(seg[0][0], seg[1][0])
-        x1 = min(seg[0][1], seg[1][1])
-        x2 = max(seg[0][1], seg[1][1])
+        y1, y2 = sorted([seg[0][0], seg[1][0]])
+        x1, x2 = sorted([seg[0][1], seg[1][1]])
         for x in range(x1, x2+1):
             for y in range(y1, y2+1):
                 linepoints.append((x,y))
     elif diags:
-        y1 = seg[0][0]
-        y2 = seg[1][0]
-        x1 = seg[0][1]
-        x2 = seg[1][1]
+        y1, y2 = seg[0][0], seg[1][0]
+        x1, x2 = seg[0][1], seg[1][1]
         for o in range(0, abs(y2-y1)+1):
             ox = o if (x2>x1)  else -o
             oy = o if (y2>y1)  else -o
@@ -54,14 +50,12 @@ def draw(points):
 
 def image(name, points):
     from PIL import Image, ImageDraw
-
     out = Image.new("RGB", (max_coords[0]+1, max_coords[1]+1), (255, 255, 255))
     draw = out.load()
     for x in range(0,max_coords[0]):
         for y in range(0,max_coords[1]):
             if (x,y) in points:
                 draw[x,y] = (int((255/total_max)*points[(x,y)]), 0, 0)
-    # write to stdout
     out.save(f"{name}.png", "PNG")
 
 def count(lines):
