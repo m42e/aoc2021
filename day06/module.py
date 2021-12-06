@@ -13,22 +13,20 @@ def pw(line):
 
 def p1():
     inp = get_input(pw)
-    last = 300
-    for i in range(80):
-        newinp = []
-        for sample in inp:
-            if sample == 0:
-                newinp.append(6)
-                newinp.append(8)
-            else:
-                sample = sample -1
-                newinp.append(sample)
-        inp = newinp
-        print(len(inp), last - len(inp))
-        last = len(inp)
+    days = 80
+    add = [0]*(days+10)
+    current = len(inp)
+    for c in inp:
+        add[c-1] +=1
+    print(current)
 
-    print(len(inp))
-    return inp
+    for i in range(days-1):
+        current += add[i]
+        add[i+7] += add[i]
+        add[i+9] += add[i]
+
+    print(current)
+    return 0
 
 
 def p2(segments):
