@@ -7,6 +7,11 @@ import re
 from aoc.partselector import part_one, part_two
 import functools
 
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation
+plt.style.use('seaborn-pastel')
+
 def pw(line):
     return line.strip()
 
@@ -67,6 +72,35 @@ def p2(coords):
 
     return 0
 
+def draw():
+    from matplotlib import cbook
+    from matplotlib import cm
+    from matplotlib.colors import LightSource
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    inp = get_input(pw)
+    X = np.arange(0, 100, 1)
+    Y = np.arange(0, 100, 1)
+    def f(x, y):
+        return int(inp[x][y])
+    X, Y = np.meshgrid(X, Y)
+    Z = np.array([np.array(list(map(int, n))) for n in inp])
+
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.contour3D(X, Y, Z, 99, cmap='binary')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z');
+
+    plt.show()
+
+def p2d(coords):
+    fig = plt.figure()
+    ax = plt.axes(xlim=(0, 100), ylim=(0, 100))
+    line, = ax.plot([], [], lw=3)
+
 result1 = None
 if part_one():
     start = time.time()
@@ -78,5 +112,7 @@ if part_two():
     start = time.time()
     p2(result1)
     print(round(1000*(time.time() - start), 2), 'ms')
+
+#draw()
 
 
