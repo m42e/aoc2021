@@ -10,89 +10,40 @@ import functools
 def pw(line):
     return line.strip()
 
+matches = {')':'(', '>':'<', '}':'{',  ']':'['}
+cpoints = {')':3, '>':25137, ']':57, '}': 1197}
+dpoints = {'(':1, '<':4, '[':2, '{': 3}
 def p1():
     inp = get_input(pw)
-    stack = []
-    points = 0 
+    points = 0
+    oks = []
     for sample in inp:
+        stack = []
+        currentpoints = 0
         for s in sample:
             if s in ['(', '<', '{', '[']:
                 stack.append(s)
             else:
-                c = stack.pop()
-                if s == ')':
-                    if c == '(':
-                        continue
-                    points+=3
-                if s == '>':
-                    if c == '<':
-                        continue
-                    points+=25137
-                if s == ']':
-                    if c == '[':
-                        continue
-                    points+=57
-                if s == '}':
-                    if c == '{':
-                        continue
-                    points+=1197
-
+                if stack.pop() != matches[s]:
+                    currentpoints += cpoints[s]
+        if currentpoints != 0:
+            oks.append(stack)
+        points += currentpoints
     print(points)
-    return inp
+    return oks
 
 
 def p2(segments):
-    inp = get_input(pw)
     total = []
-    inp = get_input(pw)
-    points = 0
-    for sample in inp:
-        stack = []
-        broken = False
+    for s in segments:
         points = 0
-        for s in sample:
-            if s in ['(', '<', '{', '[']:
-                stack.append(s)
-            else:
-                c = stack.pop()
-                if s == ')':
-                    if c == '(':
-                        continue
-                    broken = True
-                    break
-                if s == '>':
-                    if c == '<':
-                        continue
-                    broken = True
-                    break
-                if s == ']':
-                    if c == '[':
-                        continue
-                    broken = True
-                    break
-                if s == '}':
-                    if c == '{':
-                        continue
-                    broken = True
-                    break
-
-        points = 0
-        if not broken:
-            while len(stack) > 0:
-                points *= 5
-                c = stack.pop()
-                if c == '(':
-                    points += 1
-                if c == '[':
-                    points += 2
-                if c == '{':
-                    points += 3
-                if c == '<':
-                    points += 4
-            total.append(points)
+        while len(s) > 0:
+            points *= 5
+            points += dpoints[s.pop()]
+        total.append(points)
     total = sorted(total)
     print(len(total), total[int(len(total)/2)])
-    return inp
+    return segments
 
 result1 = None
 if part_one():
