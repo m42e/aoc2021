@@ -49,31 +49,25 @@ def p2(segments):
     lines = parse(inp)
 
     paths = set()
-    visit = [("start",)]
+    visit = [(("start",), False)]
+    count = 0
+    part1 = 0
     while len(visit) > 0:
-        current = visit.pop()
+        count += 1
+        current, hasdoublevisit = visit.pop()
         for x in lines[current[-1]]:
-            ccount = current.count(x)
+            ccount = 0
             if x == x.lower():
-                if ccount >= 2:
+                ccount = int(x in current)
+                if ccount >= 2 or (ccount == 1 and (x == "start" or hasdoublevisit)):
                     continue
-                counttwos = sum(
-                    map(
-                        lambda n: current.count(n) == 2,
-                        filter(lambda n: n == n.lower() and n != "start", set(current)),
-                    )
-                )
-                if (counttwos == 1) and ccount == 1:
-                    continue
-
-            if x in ["start", "end"] and ccount >= 1:
-                continue
             p = current + (x,)
             if x == "end":
                 paths.add(p)
             else:
-                visit.append(p)
+                visit.append((p, ccount == 1 or hasdoublevisit))
     print(len(paths))
+    print(f"tested {count} paths, {part1/1000.0}")
     return paths
 
 
