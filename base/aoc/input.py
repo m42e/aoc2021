@@ -8,23 +8,39 @@ def parse_args():
     parser.add_argument('input', type=str, nargs='*')
     return parser.parse_known_args()
 
-def get_input(transform):
+def get_input(transform, parts=None, transform2=None):
     p = parse_args()[0]
     if p.input:
         return transform(p.input)
     inp = []
+    inp2 = []
     if p.file:
         f = open(p.file)
     elif p.sample:
         f = open('data/sample.txt')
     else:
         f = open('data/data.txt')
+    matched = False
     for line in f.readlines():
-        inp.append(transform(line.strip()))
+        if not matched and parts is not None:
+            matched = parts(line)
+            if matched:
+                continue
+        if not matched:
+            inp.append(transform(line.strip()))
+        else:
+            tl = ''
+            if transform2 is None:
+                tl = transform(line.strip())
+            else:
+                tl = transform2(line.strip())
+            inp2.append(tl)
     f.close()
-    if len(inp) == 1:
+    if len(inp) == 1 and parts is None:
         return inp[0]
-    return inp
+    if parts is None:
+        return inp
+    return inp, inp2
 
 
 def read_single_keypress():
