@@ -8,12 +8,11 @@ def parse_args():
     parser.add_argument('input', type=str, nargs='*')
     return parser.parse_known_args()
 
-def get_input(transform, parts=None, transform2=None):
+def get_input(transform, split=None, transform2=None):
     p = parse_args()[0]
     if p.input:
         return transform(p.input)
     inp = []
-    inp2 = []
     if p.file:
         f = open(p.file)
     elif p.sample:
@@ -21,26 +20,28 @@ def get_input(transform, parts=None, transform2=None):
     else:
         f = open('data/data.txt')
     matched = False
+    part2 = False
+    tempinput = []
     for line in f.readlines():
-        if not matched and parts is not None:
-            matched = parts(line)
+        if split is not None:
+            matched = split(line)
             if matched:
+                part2 = True
+                inp.append(tempinput)
+                tempinput = []
                 continue
-        if not matched:
-            inp.append(transform(line.strip()))
+        if not part2 or transform2 is None:
+            tempinput.append(transform(line.strip()))
         else:
-            tl = ''
-            if transform2 is None:
-                tl = transform(line.strip())
-            else:
-                tl = transform2(line.strip())
-            inp2.append(tl)
+            tempinput.append(transform2(line.strip()))
+    inp.append(tempinput)
     f.close()
-    if len(inp) == 1 and parts is None:
+    if len(inp) == 1 and split is None:
+        if len(inp[0]) == 1:
+            return inp[0][0]
+    if split is None:
         return inp[0]
-    if parts is None:
-        return inp
-    return inp, inp2
+    return inp
 
 
 def read_single_keypress():
